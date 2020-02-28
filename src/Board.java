@@ -20,6 +20,7 @@ public class Board extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(550, 750));
         setBackground(Color.BLACK);
         this.game = game;
+        timer = new Timer(1000/60, this);
     }
 
     public void setup(){
@@ -34,16 +35,37 @@ public class Board extends JPanel implements ActionListener {
             actors.add(new Enemy(Color.RED, (int)(Math.random()*(getWidth()-paddingNum)+paddingNum), (int)(Math.random()*(getHeight()-paddingNum)+paddingNum), 25, 25, this));
         }
 
-        timer = new Timer(1000/60, this);
-        timer.start();
+        /*timer = new Timer(1000/60, this);
+        timer.start();*/
 
     }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        for(Sprite thisGuy: actors){
-            thisGuy.paint(g);
+
+        if(Gamestates.isMENU()){
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Monospaced", Font.BOLD, 40));
+            printSimpleString("DON'T FEED THE DOGS!", getWidth(), 0, 150, g);
+            g.setFont(new Font("Monospaced", Font.ITALIC, 25));
+            printSimpleString("Press ENTER to play!", getWidth(), 0, 225, g);
         }
+
+        if(Gamestates.isPLAY() && !timer.isRunning()){
+            timer.start();
+        }
+
+        if(Gamestates.isPLAY()) {
+            for (Sprite thisGuy : actors) {
+                thisGuy.paint(g);
+            }
+        }
+    }
+
+    private void printSimpleString(String s, int width, int XPos, int YPos, Graphics g){
+        int stringLen = (int)g.getFontMetrics().getStringBounds(s, g).getWidth();
+        int start = width/2 - stringLen/2;
+        g.drawString(s, start + XPos, YPos);
     }
 
     public void checkCollisions(){
@@ -66,22 +88,35 @@ public class Board extends JPanel implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        nextMoment = System.currentTimeMillis();
-        if ((nextMoment - game.getMoment() >= 1500)){
-            checkCollisions();
-        }
-        //Gives 5 second invincibility at the start of game starting when first opened
+        if(Gamestates.isPLAY() && !Gamestates.isPAUSE()) {
+            nextMoment = System.currentTimeMillis();
+            if ((nextMoment - game.getMoment() >= 1500)) {
+                checkCollisions();
+            }
+            //Gives 1.5 second invincibility at the start of game starting when first opened
 
 
-        if(game.getIsClicked()){
-            for(Sprite thisGuy: actors){
-                thisGuy.move();
+            if (game.getIsClicked()) {
+                for (Sprite thisGuy : actors) {
+                    thisGuy.move();
+                }
+            }
+
+            if (actors.size() < STATS.getNumEnemies() + 1) {
+                System.out.println("Killed em all");
+                game.notClicked();
             }
         }
+        if(game.isEnterPressed()){
+            Gamestates.setPLAY(true);
+            Gamestates.setMENU(false);
+        }
 
-        if(actors.size() < STATS.getNumEnemies() + 1){
-            System.out.println("Killed em all");
-            game.notClicked();
+        if(game.ispPressed()){
+            if(Gamestates.isPAUSE()){
+                Gamestates.setPAUSE(false);
+            }else
+                Gamestates.setPAUSE(true);
         }
 
         repaint();

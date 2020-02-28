@@ -1,5 +1,7 @@
 import javax.swing.*;
+import javax.xml.soap.SOAPPart;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -10,6 +12,7 @@ public class Game extends JFrame {
     int positionX, positionY;
     long moment;
     boolean mouseClicked = false;
+    boolean enterPressed, pPressed;
 
     public Game(){
         setTitle("Shapey Shapes");
@@ -52,6 +55,34 @@ public class Game extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            enterPressed = true;
+            System.out.println("Enter");
+        }
+        if(e.getKeyCode() == KeyEvent.VK_P){
+            pPressed = true;
+            System.out.println("P");
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            enterPressed = false;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_P){
+            pPressed = false;
+        }
+    }
+
+    public boolean isEnterPressed(){
+        return enterPressed;
+    }
+    public boolean ispPressed(){
+        return pPressed;
+    }
+
     public int getPositionX(){
         return positionX;
     }
@@ -78,5 +109,6 @@ public class Game extends JFrame {
         game.board.setup();
 
     }
+
 
 }
