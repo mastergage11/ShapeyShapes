@@ -1,5 +1,3 @@
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,6 +19,7 @@ public class Board extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         this.game = game;
         timer = new Timer(1000/60, this);
+        timer.start();
     }
 
     public void setup(){
@@ -40,33 +39,7 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
 
-        if(Gamestates.isMENU()){
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Monospaced", Font.BOLD, 40));
-            printSimpleString("DON'T FEED THE DOGS!", getWidth(), 0, 150, g);
-            g.setFont(new Font("Monospaced", Font.ITALIC, 25));
-            printSimpleString("Press ENTER to play!", getWidth(), 0, 225, g);
-        }
-
-        if(Gamestates.isPLAY() && !timer.isRunning()){
-            timer.start();
-        }
-
-        if(Gamestates.isPLAY()) {
-            for (Sprite thisGuy : actors) {
-                thisGuy.paint(g);
-            }
-        }
-    }
-
-    private void printSimpleString(String s, int width, int XPos, int YPos, Graphics g){
-        int stringLen = (int)g.getFontMetrics().getStringBounds(s, g).getWidth();
-        int start = width/2 - stringLen/2;
-        g.drawString(s, start + XPos, YPos);
-    }
 
     public void checkCollisions(){
         for(int i = 1; i < actors.size(); i++){
@@ -103,11 +76,22 @@ public class Board extends JPanel implements ActionListener {
             }
 
             if (actors.size() < STATS.getNumEnemies() + 1) {
-                System.out.println("Killed em all");
-                game.notClicked();
+                Gamestates.setMENU(true);
+
+                    System.out.println(STATS.getLevel());
+                    STATS.setLevel(STATS.getLevel() + 1);
+                    System.out.println(STATS.getLevel());
+                    STATS.updateLevel();
+                    game.notClicked();
+                }
             }
-        }
-        if(game.isEnterPressed()){
+
+        //just create an object that covers the screen
+
+        //when the timer stops and all food is eaten, set screen to menu  then setLevel to currentLevel + 1
+        //because the screen is set to menu, the
+
+        if(game.getIsClicked()){
             Gamestates.setPLAY(true);
             Gamestates.setMENU(false);
         }
@@ -115,11 +99,41 @@ public class Board extends JPanel implements ActionListener {
         if(game.ispPressed()){
             if(Gamestates.isPAUSE()){
                 Gamestates.setPAUSE(false);
-            }else
+            }
+            else {
                 Gamestates.setPAUSE(true);
+            }
         }
 
         repaint();
+    }
+
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+
+        if(Gamestates.isMENU()){
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Monospaced", Font.BOLD, 40));
+            printSimpleString("DON'T FEED THE DOGS!", getWidth(), 0, 150, g);
+            g.setFont(new Font("Monospaced", Font.ITALIC, 25));
+            printSimpleString("Press ENTER to play!", getWidth(), 0, 225, g);
+        }
+
+        if(Gamestates.isPLAY() && !timer.isRunning()){
+            timer.start();
+        }
+
+        if(Gamestates.isPLAY()) {
+            for (Sprite thisGuy : actors) {
+                thisGuy.paint(g);
+            }
+        }
+    }
+
+    private void printSimpleString(String s, int width, int XPos, int YPos, Graphics g){
+        int stringLen = (int)g.getFontMetrics().getStringBounds(s, g).getWidth();
+        int start = width/2 - stringLen/2;
+        g.drawString(s, start + XPos, YPos);
     }
 }
 //if lives = 0  set level to 1, call setup

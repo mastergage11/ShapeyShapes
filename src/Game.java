@@ -1,21 +1,21 @@
 import javax.swing.*;
-import javax.xml.soap.SOAPPart;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.awt.event.KeyListener;
 
-public class Game extends JFrame {
+public class Game extends JFrame implements KeyListener {
     Board board;
     int positionX, positionY;
     long moment;
     boolean mouseClicked = false;
-    boolean enterPressed, pPressed;
+    boolean pPressed;
 
     public Game(){
-        setTitle("Shapey Shapes");
+        setTitle("Don't feed the dog!");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -55,30 +55,26 @@ public class Game extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ENTER){
-            enterPressed = true;
-            System.out.println("Enter");
-        }
         if(e.getKeyCode() == KeyEvent.VK_P){
             pPressed = true;
-            System.out.println("P");
+            System.out.println("ssssssssssssssssssss");
         }
     }
 
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ENTER){
-            enterPressed = false;
-        }
         if(e.getKeyCode() == KeyEvent.VK_P){
             pPressed = false;
+            System.out.println("SSSSSSSSSSSSSSSSSSSS");
         }
     }
 
-    public boolean isEnterPressed(){
-        return enterPressed;
-    }
     public boolean ispPressed(){
         return pPressed;
     }
@@ -110,5 +106,7 @@ public class Game extends JFrame {
 
     }
 
-
 }
+
+
+
